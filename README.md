@@ -6,6 +6,12 @@ Walk through hexagonal galleries filled with books containing every possible com
 
 **[Launch the Library](#getting-started)** and step inside.
 
+!["Attention is all you need" found in the Library](docs/attention.jpg)
+*The opening line of Vaswani et al.'s "Attention Is All You Need" — discovered as a Vindication on a shelf in hexagon 76JAF863...JXTHWJSM.*
+
+![Ethan Mollick's post found in the Library](docs/ethan_mollick.jpg)
+*Even the URL of the tweet that inspired this project already exists in the Library. It always has.*
+
 ---
 
 ## The Story

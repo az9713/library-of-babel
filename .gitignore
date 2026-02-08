@@ -1,4 +1,6 @@
 .ignore/
 node_modules/
 dist/
-docs/
+docs/library-of-babel-master/
+docs/*.mhtml
+docs/README.txt
