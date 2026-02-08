@@ -4,7 +4,7 @@ An immersive 3D exploration of Jorge Luis Borges's infinite library, built with 
 
 Walk through hexagonal galleries filled with books containing every possible combination of characters. Search for any text and find it waiting for you on a shelf. Encounter burned rooms left by the Purifiers, discover the blood-red Crimson Hexagon, and hunt for the mythical Catalog of Catalogs.
 
-**[Launch the Library](#getting-started)** and step inside.
+**[Launch the Library](https://library-of-babel-me.netlify.app)** and step inside.
 
 !["Attention is all you need" found in the Library](docs/attention.jpg)
 *The opening line of Vaswani et al.'s "Attention Is All You Need" — discovered as a Vindication on a shelf in hexagon 76JAF863...JXTHWJSM.*
