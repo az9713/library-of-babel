@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Library of Babel</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Three.js Canvas -->
+  <canvas id="scene"></canvas>
+
+  <!-- Vignette Overlay -->
+  <div id="vignette"></div>
+
+  <!-- Transition Fade -->
+  <div id="transition-fade"></div>
+
+  <!-- Crosshair -->
+  <div id="crosshair"></div>
+
+  <!-- Title Bar -->
+  <div id="title-bar">
+    <h1>THE LIBRARY OF BABEL</h1>
+    <div class="title-controls">
+      <button id="audio-toggle" aria-label="Toggle audio">🔊</button>
+      <label for="brightness-slider">
+        <span>☀️</span>
+        <input type="range" id="brightness-slider" min="0.3" max="1.5" step="0.1" value="1.0">
+      </label>
+    </div>
+  </div>
+
+  <!-- Intro Screen -->
+  <div id="intro-screen">
+    <div class="intro-content">
+      <h2>THE LIBRARY OF BABEL</h2>
+      <blockquote>
+        <p>"The universe (which others call the Library) is composed of an indefinite, perhaps infinite, number of hexagonal galleries..."</p>
+        <cite>— Jorge Luis Borges, 1941</cite>
+      </blockquote>
+      <p class="intro-prompt">Click to enter</p>
+    </div>
+  </div>
+
+  <!-- HUD Bar -->
+  <div id="hud-bar">
+    <div class="hud-coords">
+      <span id="hex-coords">Hex: 0,0,0</span>
+      <span class="hud-separator">|</span>
+      <span id="floor-number">Floor: 0</span>
+    </div>
+    <div class="hud-info">
+      <span id="vindication-counter">Vindications: 0</span>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div id="toolbar">
+    <button class="toolbar-btn" data-action="search">Search</button>
+    <button class="toolbar-btn" data-action="navigate">Navigate</button>
+    <button class="toolbar-btn" data-action="random">Random</button>
+    <button class="toolbar-btn" data-action="vindications">Vindications</button>
+    <button class="toolbar-btn" data-action="purifiers">Purifiers</button>
+    <button class="toolbar-btn" data-action="crimson">Crimson Hexagon</button>
+    <button class="toolbar-btn" data-action="catalog">Man of the Book</button>
+    <button class="toolbar-btn" data-action="about">About</button>
+  </div>
+
+  <!-- Book Reader Overlay -->
+  <div id="book-reader" class="hidden">
+    <div class="reader-container">
+      <div class="reader-header">
+        <h3 id="book-title">Untitled</h3>
+        <p id="book-coords" class="book-coords"></p>
+      </div>
+      <div class="reader-content">
+        <pre id="book-content"></pre>
+      </div>
+      <div class="reader-controls">
+        <button id="prev-page" class="reader-btn">← Previous</button>
+        <span id="page-indicator">Page 1 / 410</span>
+        <button id="next-page" class="reader-btn">Next →</button>
+      </div>
+      <button id="close-reader" class="close-btn">×</button>
+    </div>
+  </div>
+
+  <!-- Search Panel -->
+  <div id="search-panel" class="side-panel">
+    <div class="panel-header">
+      <h3>Search the Library</h3>
+      <button class="close-panel" data-panel="search">×</button>
+    </div>
+    <div class="panel-content">
+      <p class="panel-description">
+        Enter up to 80 characters. The Library contains every possible permutation.
+        Your text exists somewhere within these infinite halls.
+      </p>
+      <textarea id="search-input" maxlength="80" placeholder="Enter your text..."></textarea>
+      <div class="search-meta">
+        <span id="char-counter">0 / 80</span>
+        <button id="search-btn" class="primary-btn">Search</button>
+      </div>
+      <div id="search-result" class="search-result hidden">
+        <h4>Found</h4>
+        <p class="result-coords"></p>
+        <button id="go-to-search" class="primary-btn">Go There</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigator Panel -->
+  <div id="navigator-panel" class="side-panel">
+    <div class="panel-header">
+      <h3>Navigate</h3>
+      <button class="close-panel" data-panel="navigator">×</button>
+    </div>
+    <div class="panel-content">
+      <p class="panel-description">
+        Enter coordinates to travel directly to any location in the Library.
+      </p>
+      <div class="nav-input-group">
+        <label for="nav-hex">Hexagon ID:</label>
+        <input type="text" id="nav-hex" placeholder="e.g., 0s1w2n3e">
+      </div>
+      <div class="nav-input-group">
+        <label for="nav-wall">Wall (1-4):</label>
+        <input type="number" id="nav-wall" min="1" max="4" value="1">
+      </div>
+      <div class="nav-input-group">
+        <label for="nav-shelf">Shelf (1-5):</label>
+        <input type="number" id="nav-shelf" min="1" max="5" value="1">
+      </div>
+      <div class="nav-input-group">
+        <label for="nav-volume">Volume (1-32):</label>
+        <input type="number" id="nav-volume" min="1" max="32" value="1">
+      </div>
+      <div class="nav-input-group">
+        <label for="nav-page">Page (1-410):</label>
+        <input type="number" id="nav-page" min="1" max="410" value="1">
+      </div>
+      <button id="navigate-btn" class="primary-btn">Go</button>
+    </div>
+  </div>
+
+  <!-- Vindications Panel -->
+  <div id="vindications-panel" class="side-panel">
+    <div class="panel-header">
+      <h3>Your Vindications</h3>
+      <button class="close-panel" data-panel="vindications">×</button>
+    </div>
+    <div class="panel-content">
+      <p class="panel-description">
+        Words and phrases you have discovered in the Library.
+      </p>
+      <div id="vindications-list" class="vindications-list">
+        <p class="empty-state">No vindications yet. Search for text to find your first.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Man of the Book Panel -->
+  <div id="catalog-panel" class="side-panel">
+    <div class="panel-header">
+      <h3>Man of the Book</h3>
+      <button class="close-panel" data-panel="catalog">×</button>
+    </div>
+    <div class="panel-content">
+      <blockquote class="catalog-quote">
+        "On some shelf in some hexagon, men reasoned, there must exist a book
+        which is the formula and perfect compendium of all the rest: some
+        librarian has gone through it and he is analogous to a god."
+      </blockquote>
+      <div class="quest-progress">
+        <h4>Clues Discovered: <span id="clue-count">0</span> / 3</h4>
+      </div>
+      <div id="clue-list" class="clue-list">
+        <p class="empty-state">No clues found yet. Read books to discover them.</p>
+      </div>
+      <div id="catalog-destination" class="catalog-destination hidden">
+        <p>All clues found. The Catalog awaits.</p>
+        <button id="go-to-catalog" class="primary-btn">Visit the Catalog</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Modal -->
+  <div id="about-modal" class="modal hidden">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <button class="close-modal">×</button>
+      <h2>The Library of Babel</h2>
+
+      <blockquote class="modal-quote">
+        <p>"The universe (which others call the Library) is composed of an indefinite, perhaps infinite, number of hexagonal galleries, with enormous ventilation shafts in the middle, encircled by very low railings."</p>
+        <cite>— Jorge Luis Borges, "The Library of Babel" (1941)</cite>
+      </blockquote>
+
+      <section class="about-section">
+        <h3>The Library</h3>
+        <p>
+          The Library contains every possible 410-page book that can be written using
+          25 characters (22 letters, space, comma, and period). Each hexagonal room
+          contains 4 walls of 5 shelves, with 32 volumes per shelf. The books contain
+          every coherent thought ever conceived, every incoherent rambling, every truth,
+          every lie, and everything in between.
+        </p>
+      </section>
+
+      <section class="about-section">
+        <h3>The Search</h3>
+        <p>
+          Somewhere in the Library exists a book containing your name, the story of your
+          life, and the exact date of your death. There are books that predict the future
+          with perfect accuracy, and books that contradict them completely. Use the Search
+          function to find any text you desire—it already exists, waiting to be discovered.
+        </p>
+      </section>
+
+      <section class="about-section">
+        <h3>The Purifiers</h3>
+        <p>
+          Certain librarians, driven to madness by the endless gibberish, have declared
+          themselves Purifiers. They travel through the galleries destroying books they
+          deem meaningless, not realizing that the Library's very nature makes their task
+          futile and eternal.
+        </p>
+      </section>
+
+      <section class="about-section">
+        <h3>The Crimson Hexagon</h3>
+        <p>
+          Legend tells of a crimson hexagon containing a book that is the cipher, the
+          perfect compendium to all other books. Many have spent their lives searching
+          for it. Some claim to have found it. None have returned with proof.
+        </p>
+      </section>
+
+      <section class="about-section">
+        <h3>The Man of the Book</h3>
+        <p>
+          It is said that for each person, there exists a book that perfectly describes
+          their entire existence. Finding one's own book is considered the ultimate
+          vindication—proof that one's life has meaning in the vast expanse of infinity.
+        </p>
+      </section>
+
+      <section class="about-section">
+        <h3>Acknowledgments</h3>
+        <p>
+          This project is inspired by Jorge Luis Borges' short story "The Library of Babel"
+          and Jonathan Basile's libraryofbabel.info. Built with Three.js, using deterministic
+          generation to ensure every location remains consistent across visits.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <!-- Main Script -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
